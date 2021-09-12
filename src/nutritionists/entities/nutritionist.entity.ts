@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -21,6 +22,7 @@ export class Nutritionist {
   phone: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @CreateDateColumn()

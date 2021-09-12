@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { NutritionistsService } from './nutritionists.service';
 import { CreateNutritionistDto } from './dto/create-nutritionist.dto';
@@ -27,7 +28,7 @@ export class NutritionistsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.nutritionistsService.findOne(+id);
+    return this.nutritionistsService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,11 +36,11 @@ export class NutritionistsController {
     @Param('id') id: string,
     @Body() updateNutritionistDto: UpdateNutritionistDto,
   ) {
-    return this.nutritionistsService.update(+id, updateNutritionistDto);
+    return this.nutritionistsService.update(id, updateNutritionistDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.nutritionistsService.remove(+id);
+    return this.nutritionistsService.remove(id);
   }
 }
