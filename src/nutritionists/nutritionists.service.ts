@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { classToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { CreateNutritionistDto } from './dto/create-nutritionist.dto';
 import { UpdateNutritionistDto } from './dto/update-nutritionist.dto';
@@ -12,11 +13,18 @@ export class NutritionistsService {
     private readonly nutritionistRepository: Repository<Nutritionist>,
   ) {}
   async create(createNutritionistDto: CreateNutritionistDto) {
+    const userExists = await this.nutritionistRepository.findOne({
+      where: { email: createNutritionistDto.email },
+    });
+
+    if (userExists) {
+      throw new HttpException(
+        'Email já cadastrado na plataforma.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
     const nutritionist = await this.nutritionistRepository.save({
-      name: 'Igor Rodrigues',
-      email: 'igorsteixeira94@gmail.com',
-      password: '123456',
-      phone: '66 9 9999-9999',
+      ...createNutritionistDto,
     });
 
     return nutritionist;
@@ -24,18 +32,48 @@ export class NutritionistsService {
 
   async findAll(): Promise<Nutritionist[]> {
     const nutritionists = await this.nutritionistRepository.find();
-    return nutritionists;
+
+    return classToClass(nutritionists);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} nutritionist`;
+  async findOne(id: string): Promise<Nutritionist> {
+    const userExists = await this.nutritionistRepository.findOne(id);
+
+    if (!userExists) {
+      throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    return classToClass(userExists);
   }
 
-  update(id: number, updateNutritionistDto: UpdateNutritionistDto) {
-    return `This action updates a #${id} nutritionist`;
+  async update(
+    id: string,
+    updateNutritionistDto: UpdateNutritionistDto,
+  ): Promise<Nutritionist> {
+    const userExists = await this.nutritionistRepository.findOne(id);
+
+    if (!userExists) {
+      throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    await this.nutritionistRepository.update(id, {
+      ...updateNutritionistDto,
+    });
+
+    Object.assign(userExists, { ...updateNutritionistDto });
+
+    return classToClass(userExists);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} nutritionist`;
+  async remove(id: string): Promise<void> {
+    const userExists = await this.nutritionistRepository.findOne(id);
+
+    if (!userExists) {
+      throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    await this.nutritionistRepository.delete(id);
+
+    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
 }
