@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Patient } from '../../patients/entities/patient.entity';
 
 @Entity('nutritionists')
 export class Nutritionist {
@@ -24,6 +26,9 @@ export class Nutritionist {
   @Column()
   @Exclude()
   password: string;
+
+  @OneToMany(() => Patient, (patients) => patients.nutritionist)
+  patients: Patient[];
 
   @CreateDateColumn()
   created_at: Date;

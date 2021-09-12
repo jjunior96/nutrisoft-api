@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NutritionistsModule } from './nutritionists/nutritionists.module';
+import { PatientsModule } from './patients/patients.module';
 
 @Module({
   imports: [
@@ -15,9 +16,10 @@ import { NutritionistsModule } from './nutritionists/nutritionists.module';
       password: 'admin',
       database: 'nutrisoft',
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       logging: 'all',
     }),
+    PatientsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
