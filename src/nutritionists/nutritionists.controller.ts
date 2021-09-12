@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Res,
 } from '@nestjs/common';
 import { NutritionistsService } from './nutritionists.service';
 import { CreateNutritionistDto } from './dto/create-nutritionist.dto';
