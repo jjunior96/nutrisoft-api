@@ -6,6 +6,8 @@ import { CreateNutritionistDto } from './dto/create-nutritionist.dto';
 import { UpdateNutritionistDto } from './dto/update-nutritionist.dto';
 import { Nutritionist } from './entities/nutritionist.entity';
 
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class NutritionistsService {
   constructor(
@@ -23,11 +25,15 @@ export class NutritionistsService {
         HttpStatus.UNAUTHORIZED,
       );
     }
+
+    const passwordHash = await bcrypt.hash(createNutritionistDto.password, 10);
+
     const nutritionist = await this.nutritionistRepository.save({
       ...createNutritionistDto,
+      password: passwordHash,
     });
 
-    return nutritionist;
+    return classToClass(nutritionist);
   }
 
   async findAll(): Promise<Nutritionist[]> {
@@ -44,6 +50,18 @@ export class NutritionistsService {
     }
 
     return classToClass(userExists);
+  }
+
+  async findByEmail(email: string): Promise<Nutritionist> {
+    const userExists = await this.nutritionistRepository.findOne({
+      where: { email: email },
+    });
+
+    if (!userExists) {
+      throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
+    }
+
+    return userExists;
   }
 
   async update(

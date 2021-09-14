@@ -6,11 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { NutritionistsService } from './nutritionists.service';
 import { CreateNutritionistDto } from './dto/create-nutritionist.dto';
 import { UpdateNutritionistDto } from './dto/update-nutritionist.dto';
+import { JwtAuthGuard } from '../auth/shared/jwt-auth.guard';
 
+interface IRequest extends Request {
+  user: {
+    id: string;
+    email: string;
+  };
+}
 @Controller('nutritionists')
 export class NutritionistsController {
   constructor(private readonly nutritionistsService: NutritionistsService) {}
@@ -26,8 +35,9 @@ export class NutritionistsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.nutritionistsService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string, @Request() req: IRequest) {
+    return this.nutritionistsService.findOne(req?.user.id);
   }
 
   @Patch(':id')
