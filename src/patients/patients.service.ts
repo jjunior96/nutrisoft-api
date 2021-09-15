@@ -13,7 +13,10 @@ export class PatientsService {
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
   ) {}
-  async create(createPatientDto: CreatePatientDto): Promise<Patient> {
+  async create(
+    createPatientDto: CreatePatientDto,
+    nutritionistId: string,
+  ): Promise<Patient> {
     const userExists = await this.patientRepository.findOne({
       where: { email: createPatientDto.email },
     });
@@ -26,20 +29,24 @@ export class PatientsService {
     }
     const patient = await this.patientRepository.save({
       ...createPatientDto,
-      nutritionist: createPatientDto.nutritionistId,
+      nutritionist: nutritionistId,
     });
 
     return patient;
   }
 
-  async findAll(): Promise<Patient[]> {
-    const patients = await this.patientRepository.find();
+  async findAll(nutritionistId: string): Promise<Patient[]> {
+    const patients = await this.patientRepository.find({
+      where: { nutritionist: { id: nutritionistId } },
+    });
 
     return classToClass(patients);
   }
 
-  async findOne(id: string): Promise<Patient> {
-    const userExists = await this.patientRepository.findOne(id);
+  async findOne(id: string, nutritionistId: string): Promise<Patient> {
+    const userExists = await this.patientRepository.findOne(id, {
+      where: { nutritionist: { id: nutritionistId } },
+    });
 
     if (!userExists) {
       throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
@@ -48,8 +55,14 @@ export class PatientsService {
     return classToClass(userExists);
   }
 
-  async update(id: string, updatePatientDto: UpdatePatientDto) {
-    const userExists = await this.patientRepository.findOne(id);
+  async update(
+    id: string,
+    updatePatientDto: UpdatePatientDto,
+    nutritionistId: string,
+  ) {
+    const userExists = await this.patientRepository.findOne(id, {
+      where: { nutritionist: { id: nutritionistId } },
+    });
 
     if (!userExists) {
       throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);
@@ -64,8 +77,10 @@ export class PatientsService {
     return classToClass(userExists);
   }
 
-  async remove(id: string) {
-    const userExists = await this.patientRepository.findOne(id);
+  async remove(id: string, nutritionistId: string) {
+    const userExists = await this.patientRepository.findOne(id, {
+      where: { nutritionist: { id: nutritionistId } },
+    });
 
     if (!userExists) {
       throw new HttpException('Usuário não encontrado.', HttpStatus.NOT_FOUND);

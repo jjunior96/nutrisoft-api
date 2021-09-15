@@ -32,7 +32,4 @@ export class CreatePatientDto {
 
   @IsNumber({ maxDecimalPlaces: 3 })
   height: number;
-
-  @IsString()
-  nutritionistId: string;
 }
