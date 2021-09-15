@@ -13,13 +13,8 @@ import { NutritionistsService } from './nutritionists.service';
 import { CreateNutritionistDto } from './dto/create-nutritionist.dto';
 import { UpdateNutritionistDto } from './dto/update-nutritionist.dto';
 import { JwtAuthGuard } from '../auth/shared/jwt-auth.guard';
+import { IRequest } from '../interfaces/IRequestUser';
 
-interface IRequest extends Request {
-  user: {
-    id: string;
-    email: string;
-  };
-}
 @Controller('nutritionists')
 export class NutritionistsController {
   constructor(private readonly nutritionistsService: NutritionistsService) {}
