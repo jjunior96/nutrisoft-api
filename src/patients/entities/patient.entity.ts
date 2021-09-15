@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Evaluation } from '../../evaluation/entities/evaluation.entity';
 import { Nutritionist } from '../../nutritionists/entities/nutritionist.entity';
 
 @Entity('patients')
@@ -47,6 +49,9 @@ export class Patient {
 
   @ManyToOne(() => Nutritionist, (nutritionist) => nutritionist.patients, {})
   nutritionist: Nutritionist | string;
+
+  @OneToMany(() => Evaluation, (evaluation) => evaluation.patient, {})
+  evaluations: Evaluation[];
 
   @CreateDateColumn()
   created_at: Date;

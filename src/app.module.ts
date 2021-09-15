@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { NutritionistsModule } from './nutritionists/nutritionists.module';
 import { PatientsModule } from './patients/patients.module';
 import { AuthModule } from './auth/auth.module';
+import { EvaluationModule } from './evaluation/evaluation.module';
 
 @Module({
   imports: [
@@ -17,11 +18,12 @@ import { AuthModule } from './auth/auth.module';
       password: 'admin',
       database: 'nutrisoft',
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
       logging: 'all',
     }),
     PatientsModule,
     AuthModule,
+    EvaluationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
