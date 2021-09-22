@@ -30,8 +30,8 @@ export class EvaluationController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll() {
-    return this.evaluationService.findAll();
+  findAll(@Request() req: IRequest) {
+    return this.evaluationService.findAll(req.user.id);
   }
 
   @Get(':id')

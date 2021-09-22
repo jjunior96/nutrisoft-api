@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { classToClass } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { CreateEvaluationDto } from './dto/create-evaluation.dto';
 import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
@@ -19,23 +20,25 @@ export class EvaluationService {
     return evaluation;
   }
 
-  async findAll(): Promise<Evaluation[]> {
+  async findAll(nutritionistId: string): Promise<Evaluation[]> {
     const evaluations = await this.evaluationRepository.find({
-      // where: { patient: { nutritionist: { id: nutritionistId } } },
+      relations: ['patient', 'patient.nutritionist'],
+      where: { patient: { nutritionist: { id: nutritionistId } } },
     });
-    return evaluations;
+
+    return classToClass(evaluations);
   }
 
   async findOne(id: string): Promise<Evaluation> {
-    const evalution = await this.evaluationRepository.findOne(id);
+    const evaluation = await this.evaluationRepository.findOne(id);
 
-    if (!evalution) {
+    if (!evaluation) {
       throw new HttpException(
         'Avaliação não encontrada.',
         HttpStatus.NOT_FOUND,
       );
     }
-    return evalution;
+    return classToClass(evaluation);
   }
 
   async update(
@@ -49,7 +52,7 @@ export class EvaluationService {
     });
 
     Object.assign(evaluation, { ...updateEvaluationDto });
-    return evaluation;
+    return classToClass(evaluation);
   }
 
   async remove(id: string): Promise<void> {

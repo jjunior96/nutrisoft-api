@@ -14,7 +14,7 @@ export class Evaluation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'decimal' })
+  @Column({ type: 'float' })
   desired_weight: number;
 
   @Column({ type: 'int' })
